@@ -18,8 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function getComputerChoice() {
-        const choices = Array.from(computerImages);
-        return choices[Math.floor(Math.random() * choices.length)];
+        const randomIndex = Math.floor(Math.random() * computerImages.length);
+        return computerImages[randomIndex];
     }
 
     function determineWinner(playerChoice, computerChoice) {
@@ -28,9 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
             (playerChoice === "rock" && computerChoice === "scissors") ||
             (playerChoice === "scissors" && computerChoice === "paper") ||
             (playerChoice === "paper" && computerChoice === "rock")
-        ) {
-            return "player";
-        }
+        ) return "player";
         return "computer";
     }
 
@@ -57,9 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
         messageEl.textContent = "";
         resultEl.style.color = "black";
         messageEl.style.color = "black";
-        messageEl.style.fontSize = "36px";
-        messageEl.style.fontWeight = "normal";
-        restartBtn.textContent = "Restart";
         restartBtn.style.display = "inline-block";
         resetBorders();
     }
@@ -69,38 +64,27 @@ document.addEventListener("DOMContentLoaded", () => {
         messageEl.style.fontSize = "36px";
         messageEl.style.fontWeight = "bold";
         messageEl.textContent = `${winner.toUpperCase()} WINS THE GAME! 🎉`;
-
-        if (winner === "Player") {
-            messageEl.style.color = "blue";
-        } else {
-            messageEl.style.color = "red";
-        }
+        messageEl.style.color = winner === "Player" ? "blue" : "red";
         resultEl.style.color = messageEl.style.color;
-
         restartBtn.textContent = "Play Again";
         restartBtn.style.display = "inline-block";
     }
 
-    restartBtn.addEventListener('click', () => {
-        resetGame();
-    });
+    restartBtn.addEventListener('click', resetGame);
 
     resetGame(); // initialize
 
     playerImages.forEach(img => {
         img.addEventListener('click', () => {
-            if (gameOver) return; // Stop if game ended
+            if (gameOver) return;
 
             resetBorders();
-
             img.classList.add('selected');
-            const playerChoice = img.src.includes("rock") ? "rock" :
-                                 img.src.includes("paper") ? "paper" : "scissors";
 
+            const playerChoice = img.dataset.choice;
             const computerImg = getComputerChoice();
             computerImg.classList.add('selected');
-            const computerChoice = computerImg.src.includes("rock") ? "rock" :
-                                    computerImg.src.includes("paper") ? "paper" : "scissors";
+            const computerChoice = computerImg.dataset.choice;
 
             const winner = determineWinner(playerChoice, computerChoice);
 
@@ -118,15 +102,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             updateColors(winner);
-
             playerScoreEl.textContent = playerScore;
             computerScoreEl.textContent = computerScore;
 
-            if (playerScore >= 10) {
-                endGame("Player");
-            } else if (computerScore >= 10) {
-                endGame("Computer");
-            }
+            if (playerScore >= 10) endGame("Player");
+            else if (computerScore >= 10) endGame("Computer");
         });
     });
 });
